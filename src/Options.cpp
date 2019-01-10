@@ -25,6 +25,12 @@ Options::Options(int &argc, char **&argv)
   testNotes.set_description("Generate midi notes instead of using midi in");
   mainGroup.add_entry(testNotes, m_generateTestNotes);
 
+  Glib::OptionEntry fatalXRuns;
+  fatalXRuns.set_long_name("fatal-xruns");
+  fatalXRuns.set_short_name('f');
+  fatalXRuns.set_description("Terminate program in case of alsa underrun or overrun");
+  mainGroup.add_entry(fatalXRuns, m_fatalXRuns);
+
   ctx.set_main_group(mainGroup);
   ctx.set_help_enabled(true);
 
@@ -41,6 +47,11 @@ Options::Options(int &argc, char **&argv)
 bool Options::generateMidiNotes() const
 {
   return m_generateTestNotes;
+}
+
+bool Options::areXRunsFatal() const
+{
+  return m_fatalXRuns;
 }
 
 std::string Options::getMidiInputDeviceName() const

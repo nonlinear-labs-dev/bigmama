@@ -1,4 +1,6 @@
 #include "AudioOutput.h"
+#include "main.h"
+#include "Options.h"
 #include <iostream>
 
 AudioOutput::AudioOutput(const std::string& deviceName, Callback cb)
@@ -102,6 +104,11 @@ void AudioOutput::handleWriteError(snd_pcm_sframes_t result)
 {
   if(result < 0)
   {
+    if(getOptions()->areXRunsFatal())
+    {
+      throw std::runtime_error("Alsa Buffer X-Run");
+    }
+
     if(auto recoverResult = snd_pcm_recover(m_handle, result, 1))
     {
       std::cerr << "Could not recover:" << recoverResult << std::endl;
