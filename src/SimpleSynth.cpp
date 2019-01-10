@@ -1,4 +1,6 @@
 #include "SimpleSynth.h"
+#include "Options.h"
+#include "main.h"
 #include <iostream>
 #include <math.h>
 
@@ -9,14 +11,14 @@ void SimpleSynth::doMidi(const MidiEvent &event)
     m_voices[event.data.note.note].phase = 0;
     m_voices[event.data.note.note].vol = 0.9;
 
-    auto hertz = 440 * powf(2.f, (event.data.note.note - 69) / 12.0f);
-    m_voices[event.data.note.note].inc = hertz / c_sampleRate;
+    auto hertz = 440.f * powf(2.f, (event.data.note.note - 69) / 12.0f);
+    m_voices[event.data.note.note].inc = hertz / getOptions()->getSampleRate();
   }
 }
 
 void SimpleSynth::doAudio(SampleFrame *target, size_t numFrames)
 {
-  const float volumeDegradation = 1 / powf(80, 1.f / c_sampleRate);
+  const float volumeDegradation = 1 / powf(80, 1.f / getOptions()->getSampleRate());
 
   for(size_t i = 0; i < numFrames; i++)
   {

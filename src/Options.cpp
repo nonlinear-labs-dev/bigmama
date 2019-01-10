@@ -7,6 +7,18 @@ Options::Options(int &argc, char **&argv)
   Glib::OptionGroup mainGroup("common", "common options");
   Glib::OptionContext ctx;
 
+  Glib::OptionEntry samplerate;
+  samplerate.set_long_name("sample-rate");
+  samplerate.set_short_name('r');
+  samplerate.set_description("Samplerate of audio engine");
+  mainGroup.add_entry(samplerate, m_rate);
+
+  Glib::OptionEntry latency;
+  latency.set_long_name("latency");
+  latency.set_short_name('l');
+  latency.set_description("Midi-In to Audio-Out round trip time");
+  mainGroup.add_entry(latency, m_latency);
+
   Glib::OptionEntry midiIn;
   midiIn.set_long_name("midi-in");
   midiIn.set_short_name('m');
@@ -62,4 +74,14 @@ std::string Options::getMidiInputDeviceName() const
 std::string Options::getAudioOutputDeviceName() const
 {
   return m_audioOutputDeviceName;
+}
+
+int Options::getSampleRate() const
+{
+  return m_rate;
+}
+
+double Options::getLatency() const
+{
+  return m_latency;
 }

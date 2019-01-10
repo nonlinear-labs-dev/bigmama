@@ -36,11 +36,14 @@ void Synth::stop()
 
 void Synth::pushMidiEvent(const MidiEvent &event)
 {
+  if(m_startTime == std::chrono::high_resolution_clock::time_point::min())
+    return;
+
   auto &c = m_midiRingBuffer.push(event);
   auto now = std::chrono::high_resolution_clock::now();
   auto age = now - m_startTime;
   auto tsNano = std::chrono::duration_cast<std::chrono::nanoseconds>(age + m_out->getLatency());
-  c.time.tick = static_cast<snd_seq_tick_time_t>(1.0 * tsNano.count() * c_sampleRate / std::nano::den);
+  c.time.tick = static_cast<snd_seq_tick_time_t>(1.0 * tsNano.count() * getOptions()->getSampleRate() / std::nano::den);
 }
 
 void Synth::process(SampleFrame *target, size_t numFrames)
