@@ -137,7 +137,7 @@ void AudioOutput::playback(const SampleFrame* frames, size_t numFrames)
     for(size_t c = 0; c < 2; c++)
     {
       converted[f].left = std::min(1.0f, 0.5f * frames[f].left) * std::numeric_limits<int32_t>::max();
-      converted[f].right = std::min(1.0f, 0.5 f * frames[f].right) * std::numeric_limits<int32_t>::max();
+      converted[f].right = std::min(1.0f, 0.5f * frames[f].right) * std::numeric_limits<int32_t>::max();
     }
   }
 
