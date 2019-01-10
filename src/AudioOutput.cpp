@@ -103,8 +103,13 @@ void AudioOutput::handleWriteError(snd_pcm_sframes_t result)
   if(result < 0)
   {
     if(auto recoverResult = snd_pcm_recover(m_handle, result, 1))
+    {
       std::cerr << "Could not recover:" << recoverResult << std::endl;
+    }
     else
+    {
+      std::cerr << "recovered from x-run" << std::endl;
       snd_pcm_start(m_handle);
+    }
   }
 }

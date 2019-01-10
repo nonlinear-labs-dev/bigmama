@@ -5,8 +5,6 @@
 class SimpleSynth : public Synth
 {
  public:
-  using Synth::Synth;
-
   void doMidi(const MidiEvent &event) override;
   void doAudio(SampleFrame *target, size_t numFrames) override;
 

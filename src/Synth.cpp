@@ -3,29 +3,27 @@
 #include "AlsaMidiInput.h"
 #include "TestMidiInput.h"
 #include "Options.h"
+#include "main.h"
 
 #include <iostream>
 #include <chrono>
 
-Synth::Synth(const Options &options)
-    : m_options(options)
-{
-}
-
+Synth::Synth() = default;
 Synth::~Synth() = default;
 
 void Synth::start()
 {
-  auto outDeviceName = m_options.getAudioOutputDeviceName();
+  auto options = getOptions();
+  auto outDeviceName = options->getAudioOutputDeviceName();
   m_out = std::make_unique<AudioOutput>(outDeviceName, [=](auto buf, auto length) { process(buf, length); });
 
-  if(m_options.generateMidiNotes())
+  if(options->generateMidiNotes())
   {
     m_in = std::make_unique<TestMidiInput>([=](auto event) { pushMidiEvent(event); });
   }
   else
   {
-    auto inDeviceName = m_options.getMidiInputDeviceName();
+    auto inDeviceName = options->getMidiInputDeviceName();
     m_in = std::make_unique<AlsaMidiInput>(inDeviceName, [=](auto event) { pushMidiEvent(event); });
   }
 }

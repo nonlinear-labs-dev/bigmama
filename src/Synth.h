@@ -9,12 +9,11 @@
 
 class MidiInput;
 class AudioOutput;
-class Options;
 
 class Synth
 {
  public:
-  Synth(const Options &options);
+  Synth();
   virtual ~Synth();
 
   void start();
@@ -27,8 +26,6 @@ class Synth
  private:
   void process(SampleFrame *target, size_t numFrames);
   void pushMidiEvent(const MidiEvent &event);
-
-  const Options &m_options;
 
   std::unique_ptr<MidiInput> m_in;
   std::unique_ptr<AudioOutput> m_out;

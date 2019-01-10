@@ -4,6 +4,7 @@
 #include <iostream>
 
 static Glib::RefPtr<Glib::MainLoop> theMainLoop;
+static std::unique_ptr<Options> theOptions;
 
 static void quit(int)
 {
@@ -18,6 +19,11 @@ void connectSignals()
   signal(SIGTERM, quit);
 }
 
+const Options *getOptions()
+{
+  return theOptions.get();
+}
+
 void runMainLoop()
 {
   theMainLoop = Glib::MainLoop::create();
@@ -30,9 +36,9 @@ int main(int args, char *argv[])
 
   connectSignals();
 
-  Options options(args, argv);
+  theOptions = std::make_unique<Options>(args, argv);
 
-  auto synth = std::make_unique<SimpleSynth>(options);
+  auto synth = std::make_unique<SimpleSynth>();
   synth->start();
   runMainLoop();
   synth->stop();
