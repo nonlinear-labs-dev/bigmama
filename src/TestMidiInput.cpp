@@ -1,10 +1,10 @@
 #include "TestMidiInput.h"
 
-TestMidiInput::TestMidiInput(MidiInput::Callback cb)
+TestMidiInput::TestMidiInput(int distance, MidiInput::Callback cb)
     : MidiInput(cb)
 {
   m_run = true;
-  m_bgThread = std::thread([=]() { doBackgroundWork(); });
+  m_bgThread = std::thread([=]() { doBackgroundWork(distance); });
 }
 
 TestMidiInput::~TestMidiInput()
@@ -15,7 +15,7 @@ TestMidiInput::~TestMidiInput()
     m_bgThread.join();
 }
 
-void TestMidiInput::doBackgroundWork()
+void TestMidiInput::doBackgroundWork(int distance)
 {
   while(true)
   {
@@ -32,7 +32,7 @@ void TestMidiInput::doBackgroundWork()
         event.data.note.velocity = 100;
         getCallback()(event);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(std::chrono::milliseconds(distance));
 
         if(!m_run)
           return;

@@ -8,11 +8,11 @@
 class TestMidiInput : public MidiInput
 {
  public:
-  TestMidiInput(Callback cb);
+  TestMidiInput(int distance, Callback cb);
   ~TestMidiInput();
 
  private:
-  void doBackgroundWork();
+  void doBackgroundWork(int distance);
 
   std::atomic<bool> m_run = true;
   std::thread m_bgThread;

@@ -9,7 +9,11 @@
 #include <chrono>
 
 Synth::Synth() = default;
-Synth::~Synth() = default;
+
+Synth::~Synth()
+{
+  std::cout << "Samples processed by synth: " << m_pos << std::endl;
+}
 
 void Synth::start()
 {
@@ -17,9 +21,9 @@ void Synth::start()
   auto outDeviceName = options->getAudioOutputDeviceName();
   m_out = std::make_unique<AudioOutput>(outDeviceName, [=](auto buf, auto length) { process(buf, length); });
 
-  if(options->generateMidiNotes())
+  if(auto distance = options->testNotesDistance())
   {
-    m_in = std::make_unique<TestMidiInput>([=](auto event) { pushMidiEvent(event); });
+    m_in = std::make_unique<TestMidiInput>(distance, [=](auto event) { pushMidiEvent(event); });
   }
   else
   {

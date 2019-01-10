@@ -7,7 +7,7 @@ class Options
  public:
   Options(int &argc, char **&argv);
 
-  bool generateMidiNotes() const;
+  int testNotesDistance() const;
   bool areXRunsFatal() const;
   std::string getMidiInputDeviceName() const;
   std::string getAudioOutputDeviceName() const;
@@ -17,7 +17,7 @@ class Options
  private:
   Glib::ustring m_midiInputDeviceName;
   Glib::ustring m_audioOutputDeviceName;
-  bool m_generateTestNotes = false;
+  int m_testNotesTime = 0;
   bool m_fatalXRuns = false;
   int m_rate = 48000;
   double m_latency = 5;

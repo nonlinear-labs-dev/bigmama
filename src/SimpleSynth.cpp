@@ -8,7 +8,7 @@ void SimpleSynth::doMidi(const MidiEvent &event)
 {
   if(event.type == SND_SEQ_EVENT_NOTEON)
   {
-    m_voices[event.data.note.note].phase = 0;
+    m_voices[event.data.note.note].phase = g_random_double_range(0, 1);
     m_voices[event.data.note.note].vol = 0.9;
 
     auto hertz = 440.f * powf(2.f, (event.data.note.note - 69) / 12.0f);

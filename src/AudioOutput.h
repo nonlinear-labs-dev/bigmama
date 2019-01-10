@@ -33,4 +33,5 @@ class AudioOutput
   unsigned int m_latency = 0;
   snd_pcm_uframes_t m_framesPerPeriod = 0;
   snd_pcm_uframes_t m_ringBufferFrames = 0;
+  snd_pcm_uframes_t m_framesProcessed = 0;
 };

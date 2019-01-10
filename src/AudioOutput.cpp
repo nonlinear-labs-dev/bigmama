@@ -136,8 +136,8 @@ void AudioOutput::playback(const SampleFrame* frames, size_t numFrames)
   {
     for(size_t c = 0; c < 2; c++)
     {
-      converted[f].left = std::min(1.0f, 0.9f * frames[f].left) * std::numeric_limits<int32_t>::max();
-      converted[f].right = std::min(1.0f, 0.9f * frames[f].right) * std::numeric_limits<int32_t>::max();
+      converted[f].left = std::min(1.0f, 0.5f * frames[f].left) * std::numeric_limits<int32_t>::max();
+      converted[f].right = std::min(1.0f, 0.5 f * frames[f].right) * std::numeric_limits<int32_t>::max();
     }
   }
 
@@ -145,6 +145,8 @@ void AudioOutput::playback(const SampleFrame* frames, size_t numFrames)
 
   if(static_cast<snd_pcm_uframes_t>(result) != numFrames)
     handleWriteError(result);
+  else
+    m_framesProcessed += numFrames;
 }
 
 void AudioOutput::handleWriteError(snd_pcm_sframes_t result)
@@ -152,7 +154,11 @@ void AudioOutput::handleWriteError(snd_pcm_sframes_t result)
   if(result < 0)
   {
     if(getOptions()->areXRunsFatal())
-      throw std::runtime_error("Alsa Buffer X-Run");
+    {
+      std::stringstream str;
+      str << "XRun at frame position " << m_framesProcessed << std::endl;
+      throw std::runtime_error(str.str());
+    }
 
     if(auto recoverResult = snd_pcm_recover(m_handle, result, 1))
     {

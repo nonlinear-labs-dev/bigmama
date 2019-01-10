@@ -34,8 +34,8 @@ Options::Options(int &argc, char **&argv)
   Glib::OptionEntry testNotes;
   testNotes.set_long_name("test-notes");
   testNotes.set_short_name('t');
-  testNotes.set_description("Generate midi notes instead of using midi in");
-  mainGroup.add_entry(testNotes, m_generateTestNotes);
+  testNotes.set_description("Generate midi notes in the given distance (ms) instead of using midi in");
+  mainGroup.add_entry(testNotes, m_testNotesTime);
 
   Glib::OptionEntry fatalXRuns;
   fatalXRuns.set_long_name("fatal-xruns");
@@ -56,9 +56,9 @@ Options::Options(int &argc, char **&argv)
   }
 }
 
-bool Options::generateMidiNotes() const
+int Options::testNotesDistance() const
 {
-  return m_generateTestNotes;
+  return m_testNotesTime;
 }
 
 bool Options::areXRunsFatal() const
