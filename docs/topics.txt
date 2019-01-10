@@ -1,0 +1,9 @@
+
+- Thread prio
+    - bei Multi-Core-Systemen:
+        - 1 High-Prio-Thread fuer Midi fuer gutes Timing
+        - 1 High-Prio-Thread fuer Audio
+    - Prioritaet kann nur als root vergeben werden
+    - sudo setcap 'cap_sys_nice=eip' <application>' ermoeglicht das Setzen der Prioritaet auch ohne Root Rechte
+    - setcap ueberlebt kein Neu-Kompilieren
+
