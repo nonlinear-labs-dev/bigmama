@@ -42,7 +42,7 @@ void Synth::pushMidiEvent(const MidiEvent &event)
   auto now = std::chrono::high_resolution_clock::now();
   auto age = now - m_startTime;
   auto tsNano = std::chrono::duration_cast<std::chrono::nanoseconds>(age + m_out->getLatency());
-  //c.time.tick = static_cast<snd_seq_tick_time_t>(1.0 * tsNano.count() * c_sampleRate / std::nano::den);
+  c.time.tick = static_cast<snd_seq_tick_time_t>(1.0 * tsNano.count() * c_sampleRate / std::nano::den);
 }
 
 void Synth::process(SampleFrame *target, size_t numFrames)
