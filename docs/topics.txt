@@ -7,3 +7,40 @@
     - sudo setcap 'cap_sys_nice=eip' <application>' ermoeglicht das Setzen der Prioritaet auch ohne Root Rechte
     - setcap ueberlebt kein Neu-Kompilieren
 
+- mutex im AudioThread:
+    - Mutexe sind unverhersagbar: sie addieren zur Ausfuehrungszeit des AudioCallbacks eine zufaellige Menge.
+      Ein optimaler AudioCallback ist vorhersagbar und in einer idealen Welt wuerde er genau 100% der ihm
+      zur Verfuegung stehenden Zeit verbrauchen. Jeder weitere Zeitverbrauch fuehrt daher tendenziell zu einem
+      Bufferunderrun.
+
+- Mutex-Alternative 1: Atomic Stack
+    - Ein Stack aus atomic pointers kann dazu benutzt werden, Objekte von einem in den anderen Thread zu transportieren.
+    - Nachteil: FILO -> Auspacken durch Rekursion oder Umstapeln
+    - Nachteil: ABA-Problem
+    - Vorteil: unbeschraenkt
+
+- Mutex-Alternative 2: Ringbuffer
+    - Pre-Allozierter Ringbuffer mit separaten Lese-/Schreibpositionen
+    - Nachteil: Groesse mus sicher abgeschaetzt werden
+    - Vorteil: sehr einfach zu implementieren
+    - Vorteil: schnell
+    - Besonderheit: Wenn die Groesse eine 2er Potenz ist, gibt es vielfaeltige Optimierungsmoeglichkeiten
+        - index wrap mit Maske statt Modulo oder branch: "T& pop() { return array[readIdx++ & (size - 1)]; }"
+        - positionen muessen nicht aufwaendig gepflegt werden
+
+- Memory-Management im AudioThread:
+    - alloc/free nutzen mutexe, siehe "mutex im AudioThread"
+    - alloc kann sehr aufwaendig sein und vor allem unter Memory-Pressure unvorhersagbar lange dauern
+
+- shared_ptr im AudioThread
+    - technische Nachteile:
+        - der dtor eines shared_ptr kann eventuell das Objekt freigeben, das fuehrt zu "Memory-Management im AudioThread"
+          und dadurch zu "mutex im AudioThread"
+        - shared_ptr nutzt exceptions und fuegt damit unnoetige Branches in den Code ein
+        - shared_ptr muss einen shared_counter im Heap allozieren - siehe "Memory-Management im AudioThread"
+    - semantisch: Gibt es wirklich Objekte, die der AudioThread "besitzt"? Es sollte immer ausreichen, ein von aussen verwaltetes
+      Objekt per Pointer oder Referenz in den Callback reinzureichen.
+
+
+
+
