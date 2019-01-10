@@ -8,7 +8,9 @@
 #include <iostream>
 #include <chrono>
 
-Synth::Synth() = default;
+Synth::Synth()
+{
+}
 
 Synth::~Synth()
 {

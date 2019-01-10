@@ -1,4 +1,3 @@
-#include "MidiEvent.h"
 #include "AlsaMidiInput.h"
 #include <iostream>
 

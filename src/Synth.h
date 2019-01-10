@@ -2,7 +2,6 @@
 
 #include "Types.h"
 #include "RingBuffer.h"
-#include "MidiEvent.h"
 
 #include <memory>
 #include <chrono>
