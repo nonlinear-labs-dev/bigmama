@@ -32,7 +32,7 @@ void TestMidiInput::doBackgroundWork()
         event.data.note.velocity = 100;
         getCallback()(event);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(75));
 
         if(!m_run)
           return;

@@ -7,6 +7,8 @@
 #include <memory>
 #include <chrono>
 
+#include <mutex>
+
 class MidiInput;
 class AudioOutput;
 
@@ -25,11 +27,15 @@ class Synth
 
  private:
   void process(SampleFrame *target, size_t numFrames);
+  void processAudio(SampleFrame *target, size_t numFrames);
   void pushMidiEvent(const MidiEvent &event);
+  void doPushMidiEvent(const MidiEvent &event);
 
   std::unique_ptr<MidiInput> m_in;
   std::unique_ptr<AudioOutput> m_out;
   SamplePosition m_pos = 0;
   RingBuffer<MidiEvent, 2048> m_midiRingBuffer;
   std::chrono::high_resolution_clock::time_point m_startTime = std::chrono::high_resolution_clock::time_point::min();
+
+  std::mutex m_mutex;
 };

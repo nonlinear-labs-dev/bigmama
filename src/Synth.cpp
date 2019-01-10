@@ -34,11 +34,8 @@ void Synth::stop()
   m_out.reset();
 }
 
-void Synth::pushMidiEvent(const MidiEvent &event)
+void Synth::doPushMidiEvent(const MidiEvent &event)
 {
-  if(m_startTime == std::chrono::high_resolution_clock::time_point::min())
-    return;
-
   auto &c = m_midiRingBuffer.push(event);
   auto now = std::chrono::high_resolution_clock::now();
   auto age = now - m_startTime;
@@ -46,11 +43,40 @@ void Synth::pushMidiEvent(const MidiEvent &event)
   c.time.tick = static_cast<snd_seq_tick_time_t>(1.0 * tsNano.count() * getOptions()->getSampleRate() / std::nano::den);
 }
 
+void Synth::pushMidiEvent(const MidiEvent &event)
+{
+  if(m_startTime == std::chrono::high_resolution_clock::time_point::min())
+    return;
+
+  if(getOptions()->useMutex())
+  {
+    std::scoped_lock<std::mutex> lock(m_mutex);
+    doPushMidiEvent(event);
+  }
+  else
+  {
+    doPushMidiEvent(event);
+  }
+}
+
 void Synth::process(SampleFrame *target, size_t numFrames)
 {
   if(m_startTime == std::chrono::high_resolution_clock::time_point::min())
     m_startTime = std::chrono::high_resolution_clock::now();
 
+  if(getOptions()->useMutex())
+  {
+    std::scoped_lock<std::mutex> lock(m_mutex);
+    processAudio(target, numFrames);
+  }
+  else
+  {
+    processAudio(target, numFrames);
+  }
+}
+
+void Synth::processAudio(SampleFrame *target, size_t numFrames)
+{
   if(auto e = m_midiRingBuffer.peek())
   {
     auto eventPos = e->time.tick;
@@ -59,7 +85,7 @@ void Synth::process(SampleFrame *target, size_t numFrames)
     {
       doMidi(*e);
       m_midiRingBuffer.pop();
-      process(target, numFrames);
+      processAudio(target, numFrames);
       return;
     }
 
@@ -68,7 +94,7 @@ void Synth::process(SampleFrame *target, size_t numFrames)
     m_pos += spanLength;
 
     if(auto leftOver = numFrames - spanLength)
-      process(target + spanLength, leftOver);
+      processAudio(target + spanLength, leftOver);
   }
   else
   {

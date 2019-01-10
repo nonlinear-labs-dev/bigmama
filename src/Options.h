@@ -9,6 +9,7 @@ class Options
 
   bool generateMidiNotes() const;
   bool areXRunsFatal() const;
+  bool useMutex() const;
   std::string getMidiInputDeviceName() const;
   std::string getAudioOutputDeviceName() const;
   int getSampleRate() const;
@@ -21,4 +22,5 @@ class Options
   bool m_fatalXRuns = false;
   int m_rate = 48000;
   double m_latency = 5;
+  bool m_useMutex = false;
 };

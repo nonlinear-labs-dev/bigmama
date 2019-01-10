@@ -7,6 +7,12 @@ Options::Options(int &argc, char **&argv)
   Glib::OptionGroup mainGroup("common", "common options");
   Glib::OptionContext ctx;
 
+  Glib::OptionEntry mutex;
+  mutex.set_long_name("mutex");
+  mutex.set_short_name('u');
+  mutex.set_description("Use a mutex for sync midi against audio thread");
+  mainGroup.add_entry(mutex, m_useMutex);
+
   Glib::OptionEntry samplerate;
   samplerate.set_long_name("sample-rate");
   samplerate.set_short_name('r');
@@ -64,6 +70,11 @@ bool Options::generateMidiNotes() const
 bool Options::areXRunsFatal() const
 {
   return m_fatalXRuns;
+}
+
+bool Options::useMutex() const
+{
+  return m_useMutex;
 }
 
 std::string Options::getMidiInputDeviceName() const
